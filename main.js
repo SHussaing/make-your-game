@@ -3,9 +3,10 @@ const KEY_DOWN = 40;
 const KEY_RIGHT = 39;
 const KEY_LEFT = 37;
 const KEY_SPACE = 32;
+const KEY_PAUSE = 80;
 
-const GAME_WIDTH = 800;
-const GAME_HEIGHT = 600;
+const GAME_WIDTH = 1920;
+const GAME_HEIGHT = 720;
 
 const STATE = {
   x_pos : 0,
@@ -19,9 +20,10 @@ const STATE = {
   spaceship_width: 50,
   enemy_width: 50,
   cooldown : 0,
-  number_of_enemies: 16,
+  number_of_enemies: 44,
   enemy_cooldown : 0,
-  gameOver: false
+  gameOver: false,
+  pause: false
 }
 
 // General purpose functions
@@ -200,23 +202,28 @@ function KeyRelease(event) {
     STATE.move_left = false;
   } else if (event.keyCode === KEY_SPACE) {
     STATE.shoot = false;
+  } else if (event.keyCode === KEY_PAUSE) {
+    STATE.pause = !STATE.pause;
+    console.log(STATE.pause);
   }
 }
 
 // Main Update Function
-function update(){
-  updatePlayer();
-  updateEnemies($container);
-  updateLaser($container);
-  updateEnemyLaser($container);
+function update() {
+  if (!STATE.pause) {
+    updatePlayer();
+    updateEnemies($container);
+    updateLaser($container);
+    updateEnemyLaser($container);
+
+    if (STATE.gameOver) {
+      document.querySelector(".lose").style.display = "block";
+    } else if (STATE.enemies.length === 0) {
+      document.querySelector(".win").style.display = "block";
+    }
+  }
 
   window.requestAnimationFrame(update);
-  
-  if (STATE.gameOver) {
-    document.querySelector(".lose").style.display = "block";
-  } if (STATE.enemies.length == 0) {
-    document.querySelector(".win").style.display = "block";
-  }
 }
 
 function createEnemies($container) {
