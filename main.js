@@ -22,7 +22,7 @@ const STATE = {
   cooldown : 0,
   number_of_enemies: 44,
   enemy_cooldown : 0,
-  gameOver: false,
+  player_lives: 3,
   pause: false
 }
 
@@ -114,6 +114,11 @@ function updatePlayer(){
   }
 }
 
+function deletePlayer(){
+  const $player = document.querySelector(".player");
+  $container.removeChild($player);
+}
+
 // Player Laser
 function createLaser($container, x, y){
   const $laser = document.createElement("img");
@@ -171,7 +176,8 @@ function updateEnemyLaser($container){
     const enemyLaser_rectangle = enemyLaser.$enemyLaser.getBoundingClientRect();
     const spaceship_rectangle = document.querySelector(".player").getBoundingClientRect();
     if(collideRect(spaceship_rectangle, enemyLaser_rectangle)){
-      STATE.gameOver = true;
+      deleteLaser(enemyLasers, enemyLaser, enemyLaser.$enemyLaser);
+      STATE.player_lives -= 1;
     }
     setPosition(enemyLaser.$enemyLaser, enemyLaser.x + STATE.enemy_width/2, enemyLaser.y+15);
   }
@@ -204,7 +210,11 @@ function KeyRelease(event) {
     STATE.shoot = false;
   } else if (event.keyCode === KEY_PAUSE) {
     STATE.pause = !STATE.pause;
-    console.log(STATE.pause);
+    if (STATE.pause) {
+      document.querySelector(".pause").style.display = "block";
+    } else{
+      document.querySelector(".pause").style.display = "none";
+    }
   }
 }
 
@@ -215,8 +225,9 @@ function update() {
     updateEnemies($container);
     updateLaser($container);
     updateEnemyLaser($container);
-
-    if (STATE.gameOver) {
+    
+    if (STATE.player_lives === 0) {
+      deletePlayer();
       document.querySelector(".lose").style.display = "block";
     } else if (STATE.enemies.length === 0) {
       document.querySelector(".win").style.display = "block";
