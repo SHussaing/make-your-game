@@ -3,6 +3,7 @@ body {
   overflow: hidden;
   font: 16px sans-serif;
   background-color: rgb(49, 49, 49);
+  margin: 0;
 }
 
 .wrap {

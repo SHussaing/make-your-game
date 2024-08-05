@@ -23,7 +23,8 @@ const STATE = {
   number_of_enemies: 44,
   enemy_cooldown : 0,
   player_lives: 3,
-  pause: false
+  pause: false,
+  player_deleted: false
 }
 
 // General purpose functions
@@ -99,6 +100,10 @@ function createPlayer($container) {
 }
 
 function updatePlayer(){
+  if (STATE.player_deleted) {
+    return; // Exit early if the player is deleted
+  }
+
   if(STATE.move_left){
     STATE.x_pos -= 3;
   } if(STATE.move_right){
@@ -114,14 +119,15 @@ function updatePlayer(){
   }
 }
 
-function deletePlayer(){
-  const $player = document.querySelector(".player");
-  $container.removeChild($player);
+function deletePlayer() {
+  STATE.player_deleted = true;
 }
 
 // Player Laser
 function createLaser($container, x, y){
   const $laser = document.createElement("img");
+  const laserSound = new Audio("audio/laser.mp3");
+  laserSound.play(); 
   $laser.src = "img/laser.png";
   $laser.className = "laser";
   $container.appendChild($laser);
@@ -178,6 +184,8 @@ function updateEnemyLaser($container){
     if(collideRect(spaceship_rectangle, enemyLaser_rectangle)){
       deleteLaser(enemyLasers, enemyLaser, enemyLaser.$enemyLaser);
       STATE.player_lives -= 1;
+      hitSound = new Audio("audio/hit.mp3");
+      hitSound.play();
     }
     setPosition(enemyLaser.$enemyLaser, enemyLaser.x + STATE.enemy_width/2, enemyLaser.y+15);
   }
@@ -226,7 +234,7 @@ function update() {
     updateLaser($container);
     updateEnemyLaser($container);
     
-    if (STATE.player_lives === 0) {
+    if (STATE.player_lives === 0 && !STATE.player_deleted) {
       deletePlayer();
       document.querySelector(".lose").style.display = "block";
     } else if (STATE.enemies.length === 0) {
