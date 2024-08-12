@@ -20,7 +20,7 @@ const STATE = {
   spaceship_width: 50,
   enemy_width: 50,
   cooldown : 0,
-  number_of_enemies: 44,
+  number_of_enemies: 2,
   enemy_cooldown : 0,
   player_lives: 3,
   pause: false,
@@ -237,7 +237,8 @@ function update() {
     if (STATE.player_lives === 0 && !STATE.player_deleted) {
       deletePlayer();
       document.querySelector(".lose").style.display = "block";
-    } else if (STATE.enemies.length === 0) {
+      STATE.pause = true;
+    } else if (STATE.enemies.length === 0 && STATE.player_lives > 0) {
       document.querySelector(".win").style.display = "block";
     }
   }
