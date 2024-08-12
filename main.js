@@ -20,11 +20,12 @@ const STATE = {
   spaceship_width: 50,
   enemy_width: 50,
   cooldown : 0,
-  number_of_enemies: 2,
+  number_of_enemies: 44,
   enemy_cooldown : 0,
   player_lives: 3,
   pause: false,
-  player_deleted: false
+  player_deleted: false,
+  score: 0,
 }
 
 // General purpose functions
@@ -138,6 +139,8 @@ function createLaser($container, x, y){
 
 function updateLaser($container){
   const lasers = STATE.lasers;
+  const score = document.getElementById('score')
+  score.textContent = 'Score: '+ STATE.score
   for(let i = 0; i < lasers.length; i++){
     const laser = lasers[i];
     laser.y -= 2;
@@ -154,6 +157,10 @@ function updateLaser($container){
         deleteLaser(lasers, laser, laser.$laser);
         const index = enemies.indexOf(enemy);
         enemies.splice(index,1);
+        STATE.score += 10;
+        score.textContent = 'Score: '+ STATE.score
+        console.log(STATE.score)
+
         $container.removeChild(enemy.$enemy);
       }
     }
@@ -237,7 +244,6 @@ function update() {
     if (STATE.player_lives === 0 && !STATE.player_deleted) {
       deletePlayer();
       document.querySelector(".lose").style.display = "block";
-      STATE.pause = true;
     } else if (STATE.enemies.length === 0 && STATE.player_lives > 0) {
       document.querySelector(".win").style.display = "block";
     }
