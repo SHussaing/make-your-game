@@ -29,11 +29,41 @@ body {
   z-index: -2;
 }
 
-header { 
+header {
   text-align: center;
   background: rgb(27, 110, 206);
   color: #fff;
   padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #1b6ece;
+}
+
+header h3 {
+  margin: 0;
+}
+
+#score,
+#time {
+  font-weight: bold;
+}
+
+.lives img {
+  height: 20px;
+  width: 20px;
+  margin-left: 5px;
+}
+
+.time{
+  display: flex;
+  align-items: center;
+}
+
+.lives {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 footer {

@@ -26,6 +26,7 @@ const STATE = {
   pause: false,
   player_deleted: false,
   score: 0,
+  time_alive: Date.now(),
 }
 
 // General purpose functions
@@ -140,7 +141,7 @@ function createLaser($container, x, y){
 function updateLaser($container){
   const lasers = STATE.lasers;
   const score = document.getElementById('score')
-  score.textContent = 'Score: '+ STATE.score
+  score.textContent = STATE.score
   for(let i = 0; i < lasers.length; i++){
     const laser = lasers[i];
     laser.y -= 2;
@@ -158,7 +159,7 @@ function updateLaser($container){
         const index = enemies.indexOf(enemy);
         enemies.splice(index,1);
         STATE.score += 10;
-        score.textContent = 'Score: '+ STATE.score
+        score.textContent = STATE.score
         console.log(STATE.score)
 
         $container.removeChild(enemy.$enemy);
@@ -180,6 +181,7 @@ function createEnemyLaser($container, x, y){
 
 function updateEnemyLaser($container){
   const enemyLasers = STATE.enemyLasers;
+  const lives = document.getElementById('lives')
   for(let i = 0; i < enemyLasers.length; i++){
     const enemyLaser = enemyLasers[i];
     enemyLaser.y += 2;
@@ -191,11 +193,23 @@ function updateEnemyLaser($container){
     if(collideRect(spaceship_rectangle, enemyLaser_rectangle)){
       deleteLaser(enemyLasers, enemyLaser, enemyLaser.$enemyLaser);
       STATE.player_lives -= 1;
+      lives.removeChild(lives.lastElementChild);
       hitSound = new Audio("audio/hit.mp3");
       hitSound.play();
     }
     setPosition(enemyLaser.$enemyLaser, enemyLaser.x + STATE.enemy_width/2, enemyLaser.y+15);
   }
+}
+
+//time counter
+
+function upadteTime() {
+  const time = document.getElementById('time')
+  let miliseconds = Date.now() - STATE.time_alive;
+
+  //display time in seconds
+  time.textContent = `${Math.floor(miliseconds/1000)}`
+
 }
 
 // Delete Laser
@@ -240,6 +254,7 @@ function update() {
     updateEnemies($container);
     updateLaser($container);
     updateEnemyLaser($container);
+    upadteTime();
     
     if (STATE.player_lives === 0 && !STATE.player_deleted) {
       deletePlayer();
