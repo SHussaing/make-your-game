@@ -20,13 +20,15 @@ const STATE = {
   spaceship_width: 50,
   enemy_width: 50,
   cooldown : 0,
-  number_of_enemies: 44,
+  number_of_enemies: 2,
   enemy_cooldown : 0,
   player_lives: 3,
   pause: false,
   player_deleted: false,
   score: 0,
   time_alive: Date.now(),
+  total_pause_time: 0, //Tracks total paused time
+  pause_start: null,     //Tracks the start time of the pause
 }
 
 // General purpose functions
@@ -204,12 +206,12 @@ function updateEnemyLaser($container){
 //time counter
 
 function upadteTime() {
-  const time = document.getElementById('time')
-  let miliseconds = Date.now() - STATE.time_alive;
-
-  //display time in seconds
-  time.textContent = `${Math.floor(miliseconds/1000)}`
-
+  const time = document.getElementById('time');
+  
+  let elapsed_time = Date.now() - STATE.time_alive - STATE.total_pause_time;
+  
+  // Display time in seconds
+  time.textContent = `${Math.floor(elapsed_time / 1000)}`;
 }
 
 // Delete Laser
@@ -241,8 +243,11 @@ function KeyRelease(event) {
     STATE.pause = !STATE.pause;
     if (STATE.pause) {
       document.querySelector(".pause").style.display = "block";
-    } else{
+      STATE.pause_start = Date.now(); // Track when the game is paused
+    } else {
       document.querySelector(".pause").style.display = "none";
+      STATE.total_pause_time += Date.now() - STATE.pause_start; // Add paused duration to total
+      STATE.pause_start = null;
     }
   }
 }
@@ -259,8 +264,12 @@ function update() {
     if (STATE.player_lives === 0 && !STATE.player_deleted) {
       deletePlayer();
       document.querySelector(".lose").style.display = "block";
+      const loseAudio = new Audio("audio/lose.wav");
+      loseAudio.play();
+      STATE.pause = true;
     } else if (STATE.enemies.length === 0 && STATE.player_lives > 0) {
       document.querySelector(".win").style.display = "block";
+      STATE.pause = true;
     }
   }
 
