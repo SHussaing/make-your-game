@@ -20,7 +20,7 @@ const STATE = {
   spaceship_width: 50,
   enemy_width: 50,
   cooldown : 0,
-  number_of_enemies: 2,
+  number_of_enemies: 44, 
   enemy_cooldown : 0,
   player_lives: 3,
   pause: false,
@@ -73,23 +73,29 @@ function createEnemy($container, x, y){
   setPosition($enemy, x, y)
 }
 
-function updateEnemies($container){
-  const dx = Math.sin(Date.now()/1000)*40;
-  const dy = Math.cos(Date.now()/1000)*30;
+function updateEnemies($container) {
+  // Calculate the adjusted time considering the paused duration
+  let adjustedTime = Date.now() - STATE.total_pause_time;
+  
+  // Calculate dx and dy based on adjusted time
+  const dx = Math.sin(adjustedTime / 1000) * 40;
+  const dy = Math.cos(adjustedTime / 1000) * 30;
+
   const enemies = STATE.enemies;
-  for (let i = 0; i < enemies.length; i++){
+  for (let i = 0; i < enemies.length; i++) {
     const enemy = enemies[i];
     var a = enemy.x + dx;
     var b = enemy.y + dy;
     setPosition(enemy.$enemy, a, b);
-    enemy.cooldown = Math.random(0,100);
-    if (enemy.enemy_cooldown == 0){
+    enemy.cooldown = Math.random(0, 100);
+    if (enemy.enemy_cooldown == 0) {
       createEnemyLaser($container, a, b);
-      enemy.enemy_cooldown = Math.floor(Math.random()*50)+100 ;
+      enemy.enemy_cooldown = Math.floor(Math.random() * 50) + 100;
     }
     enemy.enemy_cooldown -= 0.5;
   }
 }
+
 
 // Player
 function createPlayer($container) {
@@ -259,20 +265,22 @@ function update() {
     updateEnemies($container);
     updateLaser($container);
     updateEnemyLaser($container);
-    upadteTime();
+    if(STATE.enemies.length != 0){
+      upadteTime();
+    }
     
     if (STATE.player_lives === 0 && !STATE.player_deleted) {
       deletePlayer();
       document.querySelector(".lose").style.display = "block";
       const loseAudio = new Audio("audio/lose.wav");
       loseAudio.play();
-      STATE.pause = true;
-    } else if (STATE.enemies.length === 0 && STATE.player_lives > 0) {
+    } else if (STATE.enemies.length === 0 && STATE.player_lives > 0 ) {
       document.querySelector(".win").style.display = "block";
-      STATE.pause = true;
+      const winAudio = new Audio("audio/victory.mp3");
+      winAudio.play();
+      return;
     }
   }
-
   window.requestAnimationFrame(update);
 }
 
