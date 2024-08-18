@@ -235,8 +235,17 @@ function KeyPress(event) {
     STATE.move_left = true;
   } else if (event.keyCode === KEY_SPACE) {
     STATE.shoot = true;
+
+    // Trigger the restart button click if the game is in a win, lose, or pause state
+    if (document.querySelector('.lose').style.display === 'block' || 
+        document.querySelector('.win').style.display === 'block' || 
+        document.querySelector('.pause').style.display === 'block') {
+      
+        window.location.reload(); // Refresh the page
+    }
   }
 }
+
 
 function KeyRelease(event) {
   if (event.keyCode === KEY_RIGHT) {
