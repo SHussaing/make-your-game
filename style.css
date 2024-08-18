@@ -30,6 +30,8 @@ body {
 }
 
 header {
+  will-change: transform;
+  transform: translateZ(0);
   text-align: center;
   background: rgb(27, 110, 206);
   color: #fff;
@@ -67,6 +69,8 @@ header h3 {
 }
 
 footer {
+  will-change: transform;
+  transform: translateZ(0);
   padding: 10px;
   text-align: center;
   font-size: 11px;
